@@ -10,7 +10,7 @@
 3. [Fundamentación](#part3) 
 4. [Objetivos](#part4)  
 5. [Evaluación](#part5)
-6. [Bibliografía Básica](#part6)
+6. [Bibliografía](#part6)
 7. [Calendario](#part7)
 
 ____
@@ -69,6 +69,7 @@ Magallanes, José Manuel (2012). Tour Guiado por la Estadística Básica. Pontif
 
 Magallanes, José Manuel (2017). Introduction to Data Science for Social and Policy Research. Cambridge University Press.
 
+[INICIO](#beginning)
 
 
 ____
@@ -107,8 +108,8 @@ ____
  	<td colspan="1">Análisis de Datos Categóricos</td>
  	<td></td>
  </tr>
+ 
   <tr>
-  
  	<td>IV</td>
  	<td>5</td>
  	<td colspan="1">Técnicas Multivariantes</td>
