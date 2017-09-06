@@ -86,7 +86,7 @@ ____
  
   <tr>
  	<td>I</td>
- 	<td>1</td>
+ 	<td><a href="https://docs.google.com/presentation/d/1DizRUN2SA8_hqtz82JGFyEj06TZc4mDTKXWoQauY3ao/edit?usp=sharing" target="_blank">1</a></td>	
  	<td colspan="1"><a href="https://www.mindmeister.com/es/946288752?t=Xx3b0X4W65" target="_blank">Medición Social e Inteligencia</a>.</td>
  	<td>Presentación Inicial de Casos</td>
  </tr>
