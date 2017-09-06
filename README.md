@@ -20,7 +20,7 @@ ____
 
 * Nombre del curso: **Estadística para el Análisis Social**
 * Año:**2017**
-* Fechas: **4 al 13 de setiembre**
+* Fechas: **6 al 20 de setiembre**
 * Horario: **9 am - 12:30 pm**
 * Profesor:  <a href="http://www.pucp.edu.pe/profesor/jose-manuel-magallanes/" target="_blank">Dr. José Manuel Magallanes, PhD</a> ([jmagallanes@pucp.edu.pe](mailto:jmagallanes@pucp.edu.pe))[INICIO](#beginning)
 
