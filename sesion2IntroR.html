@@ -141,136 +141,104 @@ $(document).ready(function () {
 fileName='tips.csv'
 fileToRead=file.path(folder,fileName)
 datosLeidos=read.csv(fileToRead,strip.white = T,stringsAsFactors = F)</code></pre>
-<p>Toda la información ha sido ‘<em>transferida</em>’ a <strong>datosLeidos</strong>. El archivo en la computadora estaba en el folder <em>data</em>, y se llama <em>tips.csv</em>. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel facilmente.</p>
+<p>Toda la información ha sido ‘<em>transferida</em>’ a <strong>datosLeidos</strong>. El archivo en la computadora estaba en el folder <em>data</em>, y se llama <em>tips.csv</em>. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel fácilmente.</p>
 <p>Ya lo tenemos, pero para saber qué tenemos podemos usar varias funciones de R.</p>
 <p>Comencemos por saber los nombres de las variables:</p>
 <pre class="r"><code>names(datosLeidos)</code></pre>
-<pre><code>## [1] &quot;obs&quot;     &quot;totbill&quot; &quot;tip&quot;     &quot;sex&quot;     &quot;smoker&quot;  &quot;day&quot;     &quot;time&quot;   
-## [8] &quot;size&quot;</code></pre>
-<p>Formato de las variables:</p>
+<p>Podemos renombrar las variables a gusto:</p>
+<pre class="r"><code>posicionesCambiar=c(2,3,5,6,7,8)
+nuevosNombres=c('pagoTotal','propina','zonaFumador','dia','momentoDia', 'tamañoGrupo')
+names(datosLeidos)[posicionesCambiar]=nuevosNombres</code></pre>
+<p>Veamos el formato de las variables:</p>
 <pre class="r"><code>str(datosLeidos)</code></pre>
-<pre><code>## 'data.frame':    244 obs. of  8 variables:
-##  $ obs    : int  1 2 3 4 5 6 7 8 9 10 ...
-##  $ totbill: num  17 10.3 21 23.7 24.6 ...
-##  $ tip    : num  1.01 1.66 3.5 3.31 3.61 4.71 2 3.12 1.96 3.23 ...
-##  $ sex    : chr  &quot;F&quot; &quot;M&quot; &quot;M&quot; &quot;M&quot; ...
-##  $ smoker : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
-##  $ day    : chr  &quot;Sun&quot; &quot;Sun&quot; &quot;Sun&quot; &quot;Sun&quot; ...
-##  $ time   : chr  &quot;Night&quot; &quot;Night&quot; &quot;Night&quot; &quot;Night&quot; ...
-##  $ size   : int  2 3 3 2 4 4 2 4 2 2 ...</code></pre>
-<p>Un <em>int</em> almacena numeros sin decimales, un <em>num</em> numeros con decimales, y <em>chr</em> almacena texto. Resumen básico:</p>
+<p>Un <em>int</em> almacena numeros sin decimales, un <em>num</em> numeros con decimales, y <em>chr</em> almacena texto.</p>
+<p>Resumen básico:</p>
 <pre class="r"><code>summary(datosLeidos)</code></pre>
-<pre><code>##       obs            totbill           tip             sex           
-##  Min.   :  1.00   Min.   : 3.07   Min.   : 1.000   Length:244        
-##  1st Qu.: 61.75   1st Qu.:13.35   1st Qu.: 2.000   Class :character  
-##  Median :122.50   Median :17.80   Median : 2.900   Mode  :character  
-##  Mean   :122.50   Mean   :19.79   Mean   : 2.998                     
-##  3rd Qu.:183.25   3rd Qu.:24.13   3rd Qu.: 3.562                     
-##  Max.   :244.00   Max.   :50.81   Max.   :10.000                     
-##     smoker              day                time                size     
-##  Length:244         Length:244         Length:244         Min.   :1.00  
-##  Class :character   Class :character   Class :character   1st Qu.:2.00  
-##  Mode  :character   Mode  :character   Mode  :character   Median :2.00  
-##                                                           Mean   :2.57  
-##                                                           3rd Qu.:3.00  
-##                                                           Max.   :6.00</code></pre>
-<p>Las variables categóricas están guardadas como texto (char), por lo que R no entrega estadisticos de ellas. Si le pedimos a R que las convierta en categorias, el resumen será diferente.</p>
-<p>Usemos la versatil función <strong>lapply</strong>, que aplica una función a las columnas. La función a aplicar es <strong>as.factor</strong>, que puede convertir numeros o texto en categorias o <em>factores</em> en el jerga del R:</p>
+<p>Las variables categóricas están guardadas como texto (char), por lo que R no entrega estadisticos de ellas. Si le pedimos a R que las convierta en categorias, el resumen será diferente. En todo caso, un primer paso sería recodificar las modalidades en inglés.</p>
+<p>Veamos que modalidades hay:</p>
+<pre class="r"><code>table(datosLeidos$momentoDia)</code></pre>
+<p>De ahi que:</p>
+<pre class="r"><code>datosLeidos$momentoDia=ifelse(datosLeidos$momentoDia=='Night','Noche','Dia')</code></pre>
+<p>Otro caso:</p>
+<pre class="r"><code>table(datosLeidos$zonaFumador)</code></pre>
+<p>De ahi que:</p>
+<pre class="r"><code>datosLeidos$zonaFumador=ifelse(datosLeidos$zonaFumador=='Yes','Si','No')</code></pre>
+<p>Siguiente caso:</p>
+<pre class="r"><code>table(datosLeidos$dia)</code></pre>
+<p>Este es más complejo:</p>
+<pre class="r"><code>datosLeidos$dia=ifelse(datosLeidos$dia=='Fri','Vie',
+                       ifelse(datosLeidos$dia=='Sat','Sab',
+                              ifelse(datosLeidos$dia=='Sun','Dom','Jue')))</code></pre>
+<p>Ahora que ya están recodificados, usemos la versatil función <strong>lapply</strong>, que aplica una función a varias columnas. La función a aplicar es <strong>as.factor</strong>, que puede convertir numeros o texto en categorias o <em>factores</em> en el jerga del R:</p>
 <pre class="r"><code>datosLeidos[,c(4:7)]=lapply(datosLeidos[,c(4:7)],as.factor)</code></pre>
-<p>Cuando escribimos <em>datosLeidos[,c(4:7)]</em> hemos llamada a un subconjunto de los datos. Esto se debe entender así. Las variables que queriamos transformas están en las columnas de la <em>4</em> a la <em>7</em> del objeto <em>datosLeidos</em>. Si uno escribe <em>datosLeidos[1,1]</em> R devuelve una celda (primera fila, primera columna). Si escribimos <em>datosLeidos[,4)]</em> devuelve todas las filas de la columna 4.</p>
+<p>Cuando escribimos <em>datosLeidos[,c(4:7)]</em> hemos llamada a un subconjunto de los datos. Esto se debe entender así. Las variables que queriamos transformar están en las columnas de la <em>4</em> a la <em>7</em> del objeto <em>datosLeidos</em>. Si uno escribe <em>datosLeidos[1,1]</em> R devuelve una celda (primera fila, primera columna). Si escribimos <em>datosLeidos[,4)]</em> devuelve todas las filas de la columna 4.</p>
 <p>Pero escribir <em>datosLeidos[,4,5,6,7)]</em> seria un error. Por lo que hay que <strong>concatenar</strong> los valores cuando hay más de una columna. Esto se hace con el comando <strong>c()</strong>, el cual es muy usado en R.</p>
 <p>El subconjunto pudo haber sido <em>datosLeidos[,c(4,5,6,7)]</em>; pero el comando <strong>c()</strong> acepta <em>c(4:7)</em> como una secuencia.</p>
 <p>En general, podemos crear una secuencia así:</p>
 <pre class="r"><code>1:10</code></pre>
-<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
 <p>Pero si queremos secuencias mas complejas podemos usar:</p>
 <pre class="r"><code>seq(3,20,3)</code></pre>
-<pre><code>## [1]  3  6  9 12 15 18</code></pre>
 <p>Ahora, veamos que el cambio a factores de esas columnas altera los resúmenes anteriores:</p>
 <pre class="r"><code>summary(datosLeidos)</code></pre>
-<pre><code>##       obs            totbill           tip         sex     smoker   
-##  Min.   :  1.00   Min.   : 3.07   Min.   : 1.000   F: 87   No :151  
-##  1st Qu.: 61.75   1st Qu.:13.35   1st Qu.: 2.000   M:157   Yes: 93  
-##  Median :122.50   Median :17.80   Median : 2.900                    
-##  Mean   :122.50   Mean   :19.79   Mean   : 2.998                    
-##  3rd Qu.:183.25   3rd Qu.:24.13   3rd Qu.: 3.562                    
-##  Max.   :244.00   Max.   :50.81   Max.   :10.000                    
-##   day        time          size     
-##  Fri:19   Day  : 68   Min.   :1.00  
-##  Sat:87   Night:176   1st Qu.:2.00  
-##  Sun:76               Median :2.00  
-##  Thu:62               Mean   :2.57  
-##                       3rd Qu.:3.00  
-##                       Max.   :6.00</code></pre>
 <p>Si quisieramos ver una variable, podemos seleccionarla usando el simbolo ‘<strong>$</strong>’:</p>
-<pre class="r"><code>summary(datosLeidos$totbill)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    3.07   13.35   17.80   19.79   24.13   50.81</code></pre>
+<pre class="r"><code>summary(datosLeidos$pagoTotal)</code></pre>
 <p>Si queremos lo mismo para dos, podemos usar nombres:</p>
-<pre class="r"><code>summary(datosLeidos[c('totbill','size')])</code></pre>
-<pre><code>##     totbill           size     
-##  Min.   : 3.07   Min.   :1.00  
-##  1st Qu.:13.35   1st Qu.:2.00  
-##  Median :17.80   Median :2.00  
-##  Mean   :19.79   Mean   :2.57  
-##  3rd Qu.:24.13   3rd Qu.:3.00  
-##  Max.   :50.81   Max.   :6.00</code></pre>
+<pre class="r"><code>summary(datosLeidos[c('pagoTotal','momentoDia')])</code></pre>
 <p>…o posiciones:</p>
-<pre class="r"><code>summary(datosLeidos[c(2,8)])</code></pre>
-<pre><code>##     totbill           size     
-##  Min.   : 3.07   Min.   :1.00  
-##  1st Qu.:13.35   1st Qu.:2.00  
-##  Median :17.80   Median :2.00  
-##  Mean   :19.79   Mean   :2.57  
-##  3rd Qu.:24.13   3rd Qu.:3.00  
-##  Max.   :50.81   Max.   :6.00</code></pre>
+<pre class="r"><code>summary(datosLeidos[c(2,7)])</code></pre>
 <div id="lidiando-con-archivos-complejos" class="section level3">
 <h3>Lidiando con archivos ‘complejos’</h3>
+</div>
+</div>
+<div id="con-csv" class="section level2">
+<h2>Con CSV:</h2>
 <p>Ubicación:</p>
 <pre class="r"><code>folder='data'
-fileName='idePeru.xlsx'
+fileName='ide2012.csv'
 fileToRead=file.path(folder,fileName)
 cualHoja=1</code></pre>
 <p>Lectura:</p>
-<pre class="r"><code>library(openxlsx)
-datos&lt;- read.xlsx(fileToRead, cualHoja)</code></pre>
+<pre class="r"><code>datos&lt;- read.csv(fileToRead,check.names = F,encoding = 'Latin-1',stringsAsFactors = F,sep=',')</code></pre>
 <p>Revisión:</p>
 <pre class="r"><code>head(datos,10)</code></pre>
 <p>Rellamar, omitiendo filas encima:</p>
-<pre class="r"><code>filaInicial=4
-datos=read.xlsx(fileToRead, 
-                sheet = 1, 
-                startRow = filaInicial, 
-                skipEmptyRows = TRUE, skipEmptyCols = TRUE)</code></pre>
+<pre class="r"><code>saltar=3
+datos=read.csv(fileToRead, 
+                skip = saltar,
+               check.names = F,
+               encoding = 'UTF-8',
+               stringsAsFactors = F,
+               strip.white = T,
+               na.strings = &quot;&quot;)</code></pre>
 <p>Los reportes de este tipo sueles añadir información innecesaria al final, verifiquemos:</p>
 <pre class="r"><code>tail(datos,10)</code></pre>
-<p>La data acaba en la fila 222, con la provincia de Purus. Eliminemos filas innecesarias:</p>
-<pre class="r"><code>datos=datos[-c(223:226),]</code></pre>
+<p>La data acaba en la fila 224, con la provincia de Purus. Eliminemos filas innecesarias:</p>
+<pre class="r"><code>datos=datos[-c(225:228),]</code></pre>
 <p>El encabezado aun tiene problemas:</p>
-<pre class="r"><code>head(datos)</code></pre>
+<pre class="r"><code>head(datos,10)</code></pre>
 <p>Las filas 1 al 3 nos innecesarias:</p>
-<pre class="r"><code>datos=datos[-c(1:3),]</code></pre>
+<pre class="r"><code>datos=datos[-c(1:5),]</code></pre>
 <p>Separemos y guardemos los nombres de regiones y sus codigos (ubigeos) :</p>
 <pre class="r"><code>queColumnas=c(1,2)
 regiones=datos[,queColumnas]
-head(regiones,10)</code></pre>
-<p>Podemos quedarnos con los casos completos por fila:</p>
-<pre class="r"><code>regiones=regiones[complete.cases(regiones),]
 head(regiones,10)</code></pre>
 <p>Cambiemos nombres:</p>
 <pre class="r"><code>nombresNuevos=c('regionUbigeo','regionNombre')
 names(regiones)=nombresNuevos
 head(regiones)</code></pre>
+<p>Podemos quedarnos con los casos completos por fila:</p>
+<pre class="r"><code>regiones=regiones[complete.cases(regiones),]
+head(regiones,10)</code></pre>
 <p>De igual manera, guardemos la info de las provincias:</p>
 <pre class="r"><code>queColumnas=c(2)
 provincias=datos[,-queColumnas]
 head(provincias,10)</code></pre>
-<p>Eliminemos columnas de los rankings. Primero veamos que columnas hay:</p>
+<p>Eliminemos columnas vacias y de los rankings. Primero veamos que columnas hay:</p>
 <pre class="r"><code>names(provincias)</code></pre>
-<p>X1 y X3 son necesarias. Eliminemos todas las otras que comiencen con X:</p>
-<pre class="r"><code>dejandoUno=seq(4,16,2) # 4,6,8, etc.
-queColumnas=c(dejandoUno)
-provincias=provincias[,-queColumnas]
+<p>Las primeras 2 son necesarias. Eliminemos todas las otras que comiencen son nombre:</p>
+<pre class="r"><code>dejandoUno=seq(4,18,2) # 4,6,8, etc.
+queColumnasBye=c(3,dejandoUno)
+provincias=provincias[,-queColumnasBye]
 head(provincias,10)</code></pre>
 <p>Nuevamente, podemos quedarnos con los casos completos por fila:</p>
 <pre class="r"><code>provincias=provincias[complete.cases(provincias),]
@@ -284,21 +252,29 @@ head(provincias)</code></pre>
 head(provincias)</code></pre>
 <p>Podriamos calcular la media de la población:</p>
 <pre class="r"><code>mean(provincias$pob2012)</code></pre>
-<p>Si aplicas una función numerica, y sale error, es por que quizas los datos tengan problemas:</p>
-<pre class="r"><code>str(provincias)</code></pre>
-<p>Las funciones numericas no pueden aplicarse a los textos (‘chr’), por ende:</p>
-<pre class="r"><code>provincias[,c(3:9)]=lapply(provincias[,c(3:9)],as.numeric)
-str(provincias)</code></pre>
+<p>Porque sale error?</p>
+<pre class="r"><code>provincias$pob2012</code></pre>
+<p>El problema es que la presencia de la coma hace que R lo reconozca como texto (‘character’). Debemos eliminar esa coma:</p>
+<pre class="r"><code>queEliminar=','
+queEntra=''
+provincias$pob2012=gsub(queEliminar,queEntra,provincias$pob2012)</code></pre>
+<p>Acabamos de eliminar la ‘,’; ahora podemos convertir esa columna en numero:</p>
+<pre class="r"><code>provincias$pob2012=as.numeric(provincias$pob2012)</code></pre>
 <p>Ahora si funciona:</p>
 <pre class="r"><code>mean(provincias$pob2012)</code></pre>
+<p>Usemos la funcion <em>str</em> para ver que tenemos:</p>
+<pre class="r"><code>str(provincias)</code></pre>
+<p>Tenemos varios valores como texto, pero no usan comas, solo punto decimal. Podriamos aplicar la funcion <em>as.numeric</em> muchas veces para cambiar columna a columna, pero R tiene una manera para que esa función se aplique en paralelo a muchas columnas:</p>
+<pre class="r"><code>provincias[,c(3:9)]=lapply(provincias[,c(4:9)],as.numeric)
+str(provincias)</code></pre>
 <p>Podemos ahora crear la columna <em>regionUbigeo</em>, usando <em>provinciaUbigeo</em>; solo hay que quedarnos con los dos (2) primeros digitos de esa columna (nótese que están como texto).</p>
 <pre class="r"><code>#primero la duplicamos pero con otro nombre (por defecto nueva columna va al final)
 provincias$regionUbigeo=provincias$provinciaUbigeo</code></pre>
 <p>A la nueva columna le reemplazamos con ‘0000’ todo valor luego de los primeros dos digitos:</p>
 <pre class="r"><code>substr(provincias$regionUbigeo,3,6)='0000'</code></pre>
-<p>Podemos reubicar la posición de la última columna:</p>
+<p>La variable se ha creado al final de la data. Podemos reubicar la posición de esa última columna:</p>
 <pre class="r"><code># jugando con la posiciones:
-provincias=provincias[,c(10,1:9)] </code></pre>
+provincias=provincias[,c(10,1:9)]  #la ultima es la posicio 10.</code></pre>
 <p>Tenemos entonces:</p>
 <pre class="r"><code>head(provincias,10)</code></pre>
 <p>Hagamos el ‘<em>merge</em>’, entre los datos de <strong>regiones</strong> y <strong>provincias</strong>:</p>
@@ -311,10 +287,6 @@ provincias=provincias[,c(10,1:9)] </code></pre>
 <pre class="r"><code>provinciasNew=provinciasNew[,c(1:2,11,3:10)]</code></pre>
 <p>Asi quedó:</p>
 <pre class="r"><code>head(provinciasNew)</code></pre>
-<p>Podemos guardar el resultado:</p>
-<pre class="r"><code># 'row.names = F' evita que se añada el numero de fila.
-write.xlsx(provinciasNew,'DensidadEstado_Peru_2012.xlsx')</code></pre>
-</div>
 </div>
 </div>
 

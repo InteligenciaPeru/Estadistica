@@ -11,99 +11,149 @@ R es un poderoso y amigable programa para el análisis estadístico, tanto para 
 
 Cuando los datos están '_limpios_', y se sabe en qué folder están, y el nombre correcto, R recupera el archivo rápidamente:
 
-```{r}
+```{r, eval=FALSE}
 folder='data'
 fileName='tips.csv'
 fileToRead=file.path(folder,fileName)
 datosLeidos=read.csv(fileToRead,strip.white = T,stringsAsFactors = F)
 ```
 
-Toda la información ha sido '_transferida_' a **datosLeidos**. El archivo en la computadora estaba en el folder _data_, y se llama _tips.csv_. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel facilmente.
+Toda la información ha sido '_transferida_' a **datosLeidos**. El archivo en la computadora estaba en el folder _data_, y se llama _tips.csv_. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel fácilmente.
 
 Ya lo tenemos, pero para saber qué tenemos podemos usar varias funciones de R.
 
 Comencemos por saber los nombres de las variables:
 
-```{r}
+```{r, eval=FALSE}
 names(datosLeidos)
 ```
 
-Formato de las variables:
+Podemos renombrar las variables a gusto:
+```{r, eval=FALSE}
+posicionesCambiar=c(2,3,5,6,7,8)
+nuevosNombres=c('pagoTotal','propina','zonaFumador','dia','momentoDia', 'tamañoGrupo')
+names(datosLeidos)[posicionesCambiar]=nuevosNombres
+```
 
-```{r}
+
+Veamos el formato de las variables:
+
+```{r, eval=FALSE}
 str(datosLeidos)
 ```
 
 Un _int_ almacena numeros sin decimales, un _num_ numeros con decimales, y _chr_ almacena texto.
+
 Resumen básico:
-```{r}
+```{r, eval=FALSE}
 summary(datosLeidos)
 ```
 
-Las variables categóricas están guardadas como texto (char), por lo que R no entrega estadisticos de ellas. Si le pedimos a R que las convierta en categorias, el resumen será diferente.
+Las variables categóricas están guardadas como texto (char), por lo que R no entrega estadisticos de ellas. Si le pedimos a R que las convierta en categorias, el resumen será diferente. En todo caso, un primer paso sería recodificar las modalidades en inglés. 
 
-Usemos la versatil función **lapply**, que aplica una función a las columnas. La función a aplicar es **as.factor**, que puede convertir numeros o texto en categorias o _factores_ en el jerga del R:
+Veamos que modalidades hay:
 
-```{r}
+```{r, eval=FALSE}
+table(datosLeidos$momentoDia)
+
+```
+De ahi que:
+
+```{r, eval=FALSE}
+datosLeidos$momentoDia=ifelse(datosLeidos$momentoDia=='Night','Noche','Dia')
+```
+
+Otro caso:
+
+```{r, eval=FALSE}
+table(datosLeidos$zonaFumador)
+```
+De ahi que:
+
+```{r, eval=FALSE}
+datosLeidos$zonaFumador=ifelse(datosLeidos$zonaFumador=='Yes','Si','No')
+```
+
+Siguiente caso:
+
+```{r, eval=FALSE}
+table(datosLeidos$dia)
+```
+
+Este es más complejo:
+
+```{r, eval=FALSE}
+datosLeidos$dia=ifelse(datosLeidos$dia=='Fri','Vie',
+                       ifelse(datosLeidos$dia=='Sat','Sab',
+                              ifelse(datosLeidos$dia=='Sun','Dom','Jue')))
+```
+
+Ahora que ya están recodificados, usemos la versatil función **lapply**, que aplica una función a varias columnas. La función a aplicar es **as.factor**, que puede convertir numeros o texto en categorias o _factores_ en el jerga del R:
+
+```{r, eval=FALSE}
 datosLeidos[,c(4:7)]=lapply(datosLeidos[,c(4:7)],as.factor)
 ```
 
-Cuando escribimos _datosLeidos[,c(4:7)]_ hemos llamada a un subconjunto de los datos. Esto se debe entender así. Las variables que queriamos transformas están en las columnas de la _4_ a la _7_ del objeto _datosLeidos_. Si uno escribe _datosLeidos[1,1]_ R devuelve una celda (primera fila, primera columna). Si escribimos _datosLeidos[,4)]_ devuelve todas las filas de la columna 4. 
+Cuando escribimos _datosLeidos[,c(4:7)]_ hemos llamada a un subconjunto de los datos. Esto se debe entender así. Las variables que queriamos transformar están en las columnas de la _4_ a la _7_ del objeto _datosLeidos_. Si uno escribe _datosLeidos[1,1]_ R devuelve una celda (primera fila, primera columna). Si escribimos _datosLeidos[,4)]_ devuelve todas las filas de la columna 4. 
 
 Pero escribir _datosLeidos[,4,5,6,7)]_ seria un error. Por lo que hay que **concatenar** los valores cuando hay más de una columna. Esto se hace con el comando **c()**, el cual es muy usado en R.
 
 El subconjunto pudo haber sido _datosLeidos[,c(4,5,6,7)]_; pero el comando **c()** acepta _c(4:7)_ como una secuencia.
 
 En general, podemos crear una secuencia así:
-```{r}
+```{r, eval=FALSE}
 1:10
 ```
 
 Pero si queremos secuencias mas complejas podemos usar:
-```{r}
+```{r, eval=FALSE}
 seq(3,20,3)
 ```
 
 Ahora, veamos que el cambio a factores de esas columnas altera los resúmenes anteriores:
 
-```{r}
+```{r, eval=FALSE}
 summary(datosLeidos)
 ```
 
 Si quisieramos ver una variable, podemos seleccionarla usando el simbolo '**$**':
-```{r}
-summary(datosLeidos$totbill)
+```{r, eval=FALSE}
+summary(datosLeidos$pagoTotal)
 ```
 
 Si queremos lo mismo para dos, podemos usar nombres:
 
-```{r}
-summary(datosLeidos[c('totbill','size')])
+```{r, eval=FALSE}
+summary(datosLeidos[c('pagoTotal','momentoDia')])
 ```
 
 ...o posiciones:
 
-```{r}
-summary(datosLeidos[c(2,8)])
+```{r, eval=FALSE}
+summary(datosLeidos[c(2,7)])
 ```
 
 
+
+
 ### Lidiando con archivos 'complejos'
+
+
+## Con CSV:
 
 
 Ubicación:
 ```{r, eval=FALSE}
 
 folder='data'
-fileName='idePeru.xlsx'
+fileName='ide2012.csv'
 fileToRead=file.path(folder,fileName)
 cualHoja=1
 ```
 
 Lectura:
 ```{r, eval=FALSE}
-library(openxlsx)
-datos<- read.xlsx(fileToRead, cualHoja)
+datos<- read.csv(fileToRead,check.names = F,encoding = 'Latin-1',stringsAsFactors = F,sep=',')
 ```
 
 Revisión:
@@ -113,11 +163,14 @@ head(datos,10)
 
 Rellamar, omitiendo filas encima:
 ```{r, eval=FALSE}
-filaInicial=4
-datos=read.xlsx(fileToRead, 
-                sheet = 1, 
-                startRow = filaInicial, 
-                skipEmptyRows = TRUE, skipEmptyCols = TRUE)
+saltar=3
+datos=read.csv(fileToRead, 
+                skip = saltar,
+               check.names = F,
+               encoding = 'UTF-8',
+               stringsAsFactors = F,
+               strip.white = T,
+               na.strings = "")
 ```
 
 Los reportes de este tipo sueles añadir información innecesaria al final, verifiquemos:
@@ -126,22 +179,21 @@ Los reportes de este tipo sueles añadir información innecesaria al final, veri
 tail(datos,10)
 ```
 
-La data acaba en la fila 222, con la provincia de Purus. Eliminemos filas innecesarias:
+La data acaba en la fila 224, con la provincia de Purus. Eliminemos filas innecesarias:
 
 ```{r, eval=FALSE}
-datos=datos[-c(223:226),]
-
+datos=datos[-c(225:228),]
 ```
 
 El encabezado aun tiene problemas:
 ```{r, eval=FALSE}
-head(datos)
+head(datos,10)
 ```
 Las filas 1 al 3 nos innecesarias:
 
 
 ```{r, eval=FALSE}
-datos=datos[-c(1:3),]
+datos=datos[-c(1:5),]
 ```
 
 Separemos y guardemos los nombres de regiones y sus codigos (ubigeos) :
@@ -150,12 +202,6 @@ queColumnas=c(1,2)
 regiones=datos[,queColumnas]
 head(regiones,10)
 ```
-Podemos quedarnos con los casos completos por fila:
-```{r, eval=FALSE}
-regiones=regiones[complete.cases(regiones),]
-head(regiones,10)
-```
-
 Cambiemos nombres:
 ```{r, eval=FALSE}
 nombresNuevos=c('regionUbigeo','regionNombre')
@@ -163,23 +209,32 @@ names(regiones)=nombresNuevos
 head(regiones)
 ```
 
+Podemos quedarnos con los casos completos por fila:
+```{r, eval=FALSE}
+regiones=regiones[complete.cases(regiones),]
+head(regiones,10)
+```
+
+
 De igual manera, guardemos la info de las provincias:
+
+
 ```{r, eval=FALSE}
 queColumnas=c(2)
 provincias=datos[,-queColumnas]
 head(provincias,10)
 ```
 
-Eliminemos columnas de los rankings. Primero veamos que columnas hay:
+Eliminemos columnas vacias y de los rankings. Primero veamos que columnas hay:
 ```{r, eval=FALSE}
 names(provincias)
 ```
-X1 y X3 son necesarias. Eliminemos todas las otras que comiencen con X:
+Las primeras 2 son necesarias. Eliminemos todas las otras que comiencen son nombre:
 
 ```{r, eval=FALSE}
-dejandoUno=seq(4,16,2) # 4,6,8, etc.
-queColumnas=c(dejandoUno)
-provincias=provincias[,-queColumnas]
+dejandoUno=seq(4,18,2) # 4,6,8, etc.
+queColumnasBye=c(3,dejandoUno)
+provincias=provincias[,-queColumnasBye]
 head(provincias,10)
 ```
 
@@ -209,23 +264,46 @@ Podriamos calcular la media de la población:
 ```{r, eval=FALSE}
 mean(provincias$pob2012)
 ```
+Porque sale error?
 
-Si aplicas una función numerica, y sale error, es por que quizas los datos tengan problemas:
 ```{r, eval=FALSE}
-str(provincias)
+provincias$pob2012
 ```
 
-Las funciones numericas no pueden aplicarse a los textos ('chr'), por ende:
+
+El problema es que la presencia de la coma hace que R lo reconozca como texto ('character'). Debemos eliminar esa coma:
+
 ```{r, eval=FALSE}
-provincias[,c(3:9)]=lapply(provincias[,c(3:9)],as.numeric)
-str(provincias)
+queEliminar=','
+queEntra=''
+provincias$pob2012=gsub(queEliminar,queEntra,provincias$pob2012)
 ```
+
+Acabamos de eliminar la ','; ahora podemos convertir esa columna en numero:
+```{r, eval=FALSE}
+provincias$pob2012=as.numeric(provincias$pob2012)
+```
+
 Ahora si funciona:
 ```{r, eval=FALSE}
 mean(provincias$pob2012)
 ```
 
+Usemos la funcion _str_ para ver que tenemos:
+
+```{r, eval=FALSE}
+str(provincias)
+```
+
+Tenemos varios valores como texto, pero no usan comas, solo punto decimal. Podriamos aplicar la funcion _as.numeric_ muchas veces para cambiar columna a columna, pero R tiene una manera para que esa función se aplique en paralelo a muchas columnas:
+```{r, eval=FALSE}
+provincias[,c(3:9)]=lapply(provincias[,c(4:9)],as.numeric)
+str(provincias)
+```
+
+
 Podemos ahora crear la columna _regionUbigeo_, usando _provinciaUbigeo_; solo hay que quedarnos con los dos (2) primeros digitos de esa columna (nótese que están como texto).
+
 ```{r, eval=FALSE}
 #primero la duplicamos pero con otro nombre (por defecto nueva columna va al final)
 provincias$regionUbigeo=provincias$provinciaUbigeo
@@ -236,10 +314,10 @@ A la nueva columna le reemplazamos con '0000' todo valor luego de los primeros d
 substr(provincias$regionUbigeo,3,6)='0000'
 ```
 
-Podemos reubicar la posición de la última columna:
+La variable se ha creado al final de la data. Podemos reubicar la posición de esa última columna:
 ```{r, eval=FALSE}
 # jugando con la posiciones:
-provincias=provincias[,c(10,1:9)] 
+provincias=provincias[,c(10,1:9)]  #la ultima es la posicio 10.
 ```
 
 Tenemos entonces:
@@ -248,6 +326,7 @@ head(provincias,10)
 ```
 
 Hagamos el '_merge_', entre los datos de **regiones** y **provincias**:
+
 ```{r, eval=FALSE}
 provinciasNew=merge(provincias,regiones,by.x = 'regionUbigeo',
                     by.y='regionUbigeo',
@@ -270,10 +349,3 @@ Asi quedó:
 ```{r, eval=FALSE}
 head(provinciasNew)
 ```
-
-Podemos guardar el resultado:
-```{r, eval=FALSE}
-# 'row.names = F' evita que se añada el numero de fila.
-write.xlsx(provinciasNew,'DensidadEstado_Peru_2012.xlsx')
-```
-
