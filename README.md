@@ -93,7 +93,9 @@ ____
   <tr>
  	<td>I</td>
  	<td>2</td><td colspan="1"><a href="https://rawgit.com/InteligenciaPeru/Estadistica/master/sesion2IntroR.html" target="_blank">Introducción al Análisis Estadístico en R</a></td>
+<td> </td>
  </tr>
+ 
   <tr>
  	<td>II</td>
  	<td>3</td>
