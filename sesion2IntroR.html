@@ -141,14 +141,19 @@ $(document).ready(function () {
 fileName='tips.csv'
 fileToRead=file.path(folder,fileName)
 datosLeidos=read.csv(fileToRead,strip.white = T,stringsAsFactors = F)</code></pre>
-<p>Toda la información ha sido ‘<em>transferida</em>’ a <strong>datosLeidos</strong>. El archivo en la computadora estaba en el folder <em>data</em>, y se llama <em>tips.csv</em>. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel fácilmente.</p>
+<p>Toda la información ha sido ‘<em>transferida</em>’ usando el simbolo <strong>=</strong> (también se puede utilizar <strong>&lt;-</strong>) a <strong>datosLeidos</strong>. El archivo en la computadora estaba en el folder <em>data</em>, y se llama <em>tips.csv</em>. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel fácilmente.</p>
 <p>Ya lo tenemos, pero para saber qué tenemos podemos usar varias funciones de R.</p>
 <p>Comencemos por saber los nombres de las variables:</p>
 <pre class="r"><code>names(datosLeidos)</code></pre>
+<p>Otra función útil es:</p>
+<pre class="r"><code>head(datosLeidos) # head(datosLeidos,10) daria 10 primeras filas</code></pre>
+<p>Si hay función <em>head()</em>, también hay:</p>
+<pre class="r"><code>tail(datosLeidos) # head(datosLeidos,10) daria 10 primeras filas</code></pre>
 <p>Podemos renombrar las variables a gusto:</p>
-<pre class="r"><code>posicionesCambiar=c(2,3,5,6,7,8)
+<pre class="r"><code>posicionesCambiar=c(2,3,5,6,7,8) # posicion de las columnas
 nuevosNombres=c('pagoTotal','propina','zonaFumador','dia','momentoDia', 'tamañoGrupo')
 names(datosLeidos)[posicionesCambiar]=nuevosNombres</code></pre>
+<p>El comando <em>c()</em> es muy utilizado pues sirve para concatenar valores, y aparecerá mucho más adelante. Justo hemos visto cómo sirve para crear dos ‘vectores’.</p>
 <p>Veamos el formato de las variables:</p>
 <pre class="r"><code>str(datosLeidos)</code></pre>
 <p>Un <em>int</em> almacena numeros sin decimales, un <em>num</em> numeros con decimales, y <em>chr</em> almacena texto.</p>
@@ -159,6 +164,7 @@ names(datosLeidos)[posicionesCambiar]=nuevosNombres</code></pre>
 <pre class="r"><code>table(datosLeidos$momentoDia)</code></pre>
 <p>De ahi que:</p>
 <pre class="r"><code>datosLeidos$momentoDia=ifelse(datosLeidos$momentoDia=='Night','Noche','Dia')</code></pre>
+<p>Nótese el uso de <strong>==</strong>, que sirve para comparar (<em>=</em> sirve para asignar).</p>
 <p>Otro caso:</p>
 <pre class="r"><code>table(datosLeidos$zonaFumador)</code></pre>
 <p>De ahi que:</p>
@@ -186,6 +192,11 @@ names(datosLeidos)[posicionesCambiar]=nuevosNombres</code></pre>
 <pre class="r"><code>summary(datosLeidos[c('pagoTotal','momentoDia')])</code></pre>
 <p>…o posiciones:</p>
 <pre class="r"><code>summary(datosLeidos[c(2,7)])</code></pre>
+<p>Una de las cosas más útiles es poder crear subconjuntos de datos mediante <em>filtros lógicos</em>:</p>
+<pre class="r"><code>dataDeDia=datosLeidos[datosLeidos$momentoDia=='Dia',]
+
+# veamos
+head(dataDeDia)</code></pre>
 <div id="lidiando-con-archivos-complejos" class="section level3">
 <h3>Lidiando con archivos ‘complejos’</h3>
 </div>
@@ -198,22 +209,23 @@ fileName='ide2012.csv'
 fileToRead=file.path(folder,fileName)
 cualHoja=1</code></pre>
 <p>Lectura:</p>
-<pre class="r"><code>datos&lt;- read.csv(fileToRead,check.names = F,encoding = 'Latin-1',stringsAsFactors = F,sep=',')</code></pre>
+<pre class="r"><code>datos&lt;- read.csv(fileToRead,check.names = F,
+                 stringsAsFactors = F)</code></pre>
 <p>Revisión:</p>
 <pre class="r"><code>head(datos,10)</code></pre>
 <p>Rellamar, omitiendo filas encima:</p>
 <pre class="r"><code>saltar=3
-datos=read.csv(fileToRead, 
-                skip = saltar,
+datos=read.csv(fileToRead,
+               skip = saltar,
                check.names = F,
-               encoding = 'UTF-8',
                stringsAsFactors = F,
-               strip.white = T,
-               na.strings = &quot;&quot;)</code></pre>
+               na.strings = &quot;&quot;) # poner NA en espacios vacios</code></pre>
 <p>Los reportes de este tipo sueles añadir información innecesaria al final, verifiquemos:</p>
 <pre class="r"><code>tail(datos,10)</code></pre>
 <p>La data acaba en la fila 224, con la provincia de Purus. Eliminemos filas innecesarias:</p>
-<pre class="r"><code>datos=datos[-c(225:228),]</code></pre>
+<pre class="r"><code># el símbolo **-** para hace 'selección inversa'.
+# asi eliminamos las filas de esa secuencia
+datos=datos[-c(225:228),]  # datos[c(1:224),] es otra opción</code></pre>
 <p>El encabezado aun tiene problemas:</p>
 <pre class="r"><code>head(datos,10)</code></pre>
 <p>Las filas 1 al 3 nos innecesarias:</p>
@@ -229,6 +241,7 @@ head(regiones)</code></pre>
 <p>Podemos quedarnos con los casos completos por fila:</p>
 <pre class="r"><code>regiones=regiones[complete.cases(regiones),]
 head(regiones,10)</code></pre>
+<p>El comando <strong>complete.cases()</strong> permite seleccionar toda fila que tenga información en cada celda.</p>
 <p>De igual manera, guardemos la info de las provincias:</p>
 <pre class="r"><code>queColumnas=c(2)
 provincias=datos[,-queColumnas]
@@ -254,39 +267,48 @@ head(provincias)</code></pre>
 <pre class="r"><code>mean(provincias$pob2012)</code></pre>
 <p>Porque sale error?</p>
 <pre class="r"><code>provincias$pob2012</code></pre>
-<p>El problema es que la presencia de la coma hace que R lo reconozca como texto (‘character’). Debemos eliminar esa coma:</p>
-<pre class="r"><code>queEliminar=','
-queEntra=''
-provincias$pob2012=gsub(queEliminar,queEntra,provincias$pob2012)</code></pre>
-<p>Acabamos de eliminar la ‘,’; ahora podemos convertir esa columna en numero:</p>
+<p>El problema es que la presencia de la coma hace que R lo reconozca como texto (‘character’). Debemos reemplazar esa ‘coma’ por ‘nada’:</p>
+<pre class="r"><code>queCambia=','
+queReemplaza=''
+provincias$pob2012=gsub(queCambia,queReemplaza,provincias$pob2012)</code></pre>
+<p>En realidad, hemos utilizado el comando <strong>gsub()</strong> para eliminar la ‘,’ , pues esta fue reemplazada por ‘nada’. Nótese que el resultado es aun tipo texto, por lo que debemos pasar esa columna a tipo número:</p>
 <pre class="r"><code>provincias$pob2012=as.numeric(provincias$pob2012)</code></pre>
 <p>Ahora si funciona:</p>
 <pre class="r"><code>mean(provincias$pob2012)</code></pre>
 <p>Usemos la funcion <em>str</em> para ver que tenemos:</p>
 <pre class="r"><code>str(provincias)</code></pre>
-<p>Tenemos varios valores como texto, pero no usan comas, solo punto decimal. Podriamos aplicar la funcion <em>as.numeric</em> muchas veces para cambiar columna a columna, pero R tiene una manera para que esa función se aplique en paralelo a muchas columnas:</p>
+<p>Tenemos varios valores como texto, pero no usan comas, solo punto decimal. Podriamos aplicar la funcion <em>as.numeric</em> muchas veces para cambiar columna a columna, pero recordemos que R tiene una manera para que esa función se aplique en simultáneo a muchas columnas:</p>
 <pre class="r"><code>provincias[,c(3:9)]=lapply(provincias[,c(4:9)],as.numeric)
 str(provincias)</code></pre>
-<p>Podemos ahora crear la columna <em>regionUbigeo</em>, usando <em>provinciaUbigeo</em>; solo hay que quedarnos con los dos (2) primeros digitos de esa columna (nótese que están como texto).</p>
+<p>Hemos hecho todo esto para poder juntar las tablas <em>regiones</em> con <em>provincias</em>. Para que estos suceda, necesitamos una columna común. Los más sencillo sería que en <em>provincias</em> exista la columna de ubigeo de región. Si nos damos cuenta, cada ubigeo de provincia contiene el valor de ubigeo región, pues ‘010100’, que es un ubigeo provincial, pertenece a la región ‘010000’.</p>
+<p>La estrategia será crear la columna <em>regionUbigeo</em> al duplicar <em>provinciaUbigeo</em>; para que luego reemplacemos los cuatro ultimos digitos por ‘0000’:</p>
 <pre class="r"><code>#primero la duplicamos pero con otro nombre (por defecto nueva columna va al final)
 provincias$regionUbigeo=provincias$provinciaUbigeo</code></pre>
 <p>A la nueva columna le reemplazamos con ‘0000’ todo valor luego de los primeros dos digitos:</p>
 <pre class="r"><code>substr(provincias$regionUbigeo,3,6)='0000'</code></pre>
-<p>La variable se ha creado al final de la data. Podemos reubicar la posición de esa última columna:</p>
+<p>La cadena de texto ‘0000’ ha sobre escrito valores celda por celda. Pero no ha reemplazado todo, sino solo de la posición 3 a la 6 (3,4,5,6).</p>
+<p>Toda variable nueva se crear al final de la tabla de datos. Podemos reubicar la posición de esa última columna:</p>
 <pre class="r"><code># jugando con la posiciones:
-provincias=provincias[,c(10,1:9)]  #la ultima es la posicio 10.</code></pre>
+provincias=provincias[,c(10,1:9)]  #la ultima es la posicion 10.</code></pre>
 <p>Tenemos entonces:</p>
 <pre class="r"><code>head(provincias,10)</code></pre>
-<p>Hagamos el ‘<em>merge</em>’, entre los datos de <strong>regiones</strong> y <strong>provincias</strong>:</p>
-<pre class="r"><code>provinciasNew=merge(provincias,regiones,by.x = 'regionUbigeo',
+<p>Queremos juntar ahora ambas tablas. Hagamos el ‘<em>merge</em>’, entre los datos de <strong>regiones</strong> y <strong>provincias</strong>:</p>
+<pre class="r"><code>provinciasNew=merge(provincias,regiones,
+                    by.x ='regionUbigeo',
                     by.y='regionUbigeo',
-                    all.x = TRUE) # Esto detecta si alguna provincia no encontró Region.</code></pre>
+                    all.x = TRUE) # Esto detecta si alguna provincia no encontró Region.
+# pudo ser: merge(provincias,regiones)</code></pre>
+<p>La función <em>merge</em> pudo escribirse de manera más sencilla. Lo importante es que los argumentos “by” indiquen que columnas tienen los mismos valores, tal que se pueda hacer la intersección.</p>
 <p>Si el merge salió bien, provincias tendrá una nueva columna (al final) con el nombre de la Región:</p>
 <pre class="r"><code>names(provinciasNew)</code></pre>
-<p>Movamos de posición esa columna nueva:</p>
-<pre class="r"><code>provinciasNew=provinciasNew[,c(1:2,11,3:10)]</code></pre>
+<p>Movamos la columna <em>regionNombre</em> a la posición ‘3’:</p>
+<pre class="r"><code># luego de la posición '2', poner la posición '11', y que a la 11 le siga todo lo demás
+provinciasNew=provinciasNew[,c(1:2,11,3:10)]</code></pre>
 <p>Asi quedó:</p>
 <pre class="r"><code>head(provinciasNew)</code></pre>
+<div id="volver-al-silabo" class="section level4">
+<h4><a href="https://inteligenciaperu.github.io/Estadistica/">VOLVER AL SILABO</a></h4>
+</div>
 </div>
 </div>
 

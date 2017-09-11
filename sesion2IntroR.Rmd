@@ -18,7 +18,7 @@ fileToRead=file.path(folder,fileName)
 datosLeidos=read.csv(fileToRead,strip.white = T,stringsAsFactors = F)
 ```
 
-Toda la información ha sido '_transferida_' a **datosLeidos**. El archivo en la computadora estaba en el folder _data_, y se llama _tips.csv_. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel fácilmente.
+Toda la información ha sido '_transferida_' usando el simbolo **=** (también se puede utilizar **<-**) a **datosLeidos**. El archivo en la computadora estaba en el folder _data_, y se llama _tips.csv_. Un archivo de este tipo es similar a un archivo en Excel, de hecho puedes abrirlo en Excel fácilmente.
 
 Ya lo tenemos, pero para saber qué tenemos podemos usar varias funciones de R.
 
@@ -28,13 +28,24 @@ Comencemos por saber los nombres de las variables:
 names(datosLeidos)
 ```
 
+Otra función útil es:
+```{r, eval=FALSE}
+head(datosLeidos) # head(datosLeidos,10) daria 10 primeras filas
+```
+
+Si hay función _head()_, también hay:
+```{r, eval=FALSE}
+tail(datosLeidos) # head(datosLeidos,10) daria 10 primeras filas
+```
+
 Podemos renombrar las variables a gusto:
 ```{r, eval=FALSE}
-posicionesCambiar=c(2,3,5,6,7,8)
+posicionesCambiar=c(2,3,5,6,7,8) # posicion de las columnas
 nuevosNombres=c('pagoTotal','propina','zonaFumador','dia','momentoDia', 'tamañoGrupo')
 names(datosLeidos)[posicionesCambiar]=nuevosNombres
 ```
 
+El comando _c()_  es muy utilizado pues sirve para concatenar valores, y aparecerá mucho más adelante. Justo hemos visto cómo sirve para crear dos 'vectores'. 
 
 Veamos el formato de las variables:
 
@@ -62,6 +73,8 @@ De ahi que:
 ```{r, eval=FALSE}
 datosLeidos$momentoDia=ifelse(datosLeidos$momentoDia=='Night','Noche','Dia')
 ```
+
+Nótese el uso de **==**, que sirve para comparar (*=* sirve para asignar).
 
 Otro caso:
 
@@ -133,6 +146,13 @@ summary(datosLeidos[c('pagoTotal','momentoDia')])
 summary(datosLeidos[c(2,7)])
 ```
 
+Una de las cosas más útiles es poder crear subconjuntos de datos mediante _filtros lógicos_:
+```{r, eval=FALSE}
+dataDeDia=datosLeidos[datosLeidos$momentoDia=='Dia',]
+
+# veamos
+head(dataDeDia)
+```
 
 
 
@@ -153,7 +173,8 @@ cualHoja=1
 
 Lectura:
 ```{r, eval=FALSE}
-datos<- read.csv(fileToRead,check.names = F,encoding = 'Latin-1',stringsAsFactors = F,sep=',')
+datos<- read.csv(fileToRead,check.names = F,
+                 stringsAsFactors = F)
 ```
 
 Revisión:
@@ -164,13 +185,11 @@ head(datos,10)
 Rellamar, omitiendo filas encima:
 ```{r, eval=FALSE}
 saltar=3
-datos=read.csv(fileToRead, 
-                skip = saltar,
+datos=read.csv(fileToRead,
+               skip = saltar,
                check.names = F,
-               encoding = 'UTF-8',
                stringsAsFactors = F,
-               strip.white = T,
-               na.strings = "")
+               na.strings = "") # poner NA en espacios vacios
 ```
 
 Los reportes de este tipo sueles añadir información innecesaria al final, verifiquemos:
@@ -182,8 +201,11 @@ tail(datos,10)
 La data acaba en la fila 224, con la provincia de Purus. Eliminemos filas innecesarias:
 
 ```{r, eval=FALSE}
-datos=datos[-c(225:228),]
+# el símbolo **-** para hace 'selección inversa'.
+# asi eliminamos las filas de esa secuencia
+datos=datos[-c(225:228),]  # datos[c(1:224),] es otra opción
 ```
+
 
 El encabezado aun tiene problemas:
 ```{r, eval=FALSE}
@@ -215,6 +237,7 @@ regiones=regiones[complete.cases(regiones),]
 head(regiones,10)
 ```
 
+El comando **complete.cases()** permite seleccionar toda fila que tenga información en cada celda. 
 
 De igual manera, guardemos la info de las provincias:
 
@@ -271,15 +294,15 @@ provincias$pob2012
 ```
 
 
-El problema es que la presencia de la coma hace que R lo reconozca como texto ('character'). Debemos eliminar esa coma:
+El problema es que la presencia de la coma hace que R lo reconozca como texto ('character'). Debemos reemplazar esa 'coma' por 'nada':
 
 ```{r, eval=FALSE}
-queEliminar=','
-queEntra=''
-provincias$pob2012=gsub(queEliminar,queEntra,provincias$pob2012)
+queCambia=','
+queReemplaza=''
+provincias$pob2012=gsub(queCambia,queReemplaza,provincias$pob2012)
 ```
 
-Acabamos de eliminar la ','; ahora podemos convertir esa columna en numero:
+En realidad, hemos utilizado el comando **gsub()** para eliminar la ',' , pues esta fue reemplazada por 'nada'. Nótese que el resultado es aun tipo texto, por lo que debemos pasar esa columna a tipo número:
 ```{r, eval=FALSE}
 provincias$pob2012=as.numeric(provincias$pob2012)
 ```
@@ -295,14 +318,17 @@ Usemos la funcion _str_ para ver que tenemos:
 str(provincias)
 ```
 
-Tenemos varios valores como texto, pero no usan comas, solo punto decimal. Podriamos aplicar la funcion _as.numeric_ muchas veces para cambiar columna a columna, pero R tiene una manera para que esa función se aplique en paralelo a muchas columnas:
+Tenemos varios valores como texto, pero no usan comas, solo punto decimal. Podriamos aplicar la funcion _as.numeric_ muchas veces para cambiar columna a columna, pero recordemos que R tiene una manera para que esa función se aplique en simultáneo a muchas columnas:
+
 ```{r, eval=FALSE}
 provincias[,c(3:9)]=lapply(provincias[,c(4:9)],as.numeric)
 str(provincias)
 ```
 
 
-Podemos ahora crear la columna _regionUbigeo_, usando _provinciaUbigeo_; solo hay que quedarnos con los dos (2) primeros digitos de esa columna (nótese que están como texto).
+Hemos hecho todo esto para poder juntar las tablas *regiones* con *provincias*. Para que estos suceda, necesitamos una columna común. Los más sencillo sería que en *provincias* exista la columna de ubigeo de región. Si nos damos cuenta, cada ubigeo de provincia contiene el valor de ubigeo región, pues '010100', que es un ubigeo provincial, pertenece a la región '010000'. 
+
+La estrategia será crear la columna _regionUbigeo_ al duplicar _provinciaUbigeo_; para que luego reemplacemos los cuatro ultimos digitos  por '0000':
 
 ```{r, eval=FALSE}
 #primero la duplicamos pero con otro nombre (por defecto nueva columna va al final)
@@ -314,10 +340,12 @@ A la nueva columna le reemplazamos con '0000' todo valor luego de los primeros d
 substr(provincias$regionUbigeo,3,6)='0000'
 ```
 
-La variable se ha creado al final de la data. Podemos reubicar la posición de esa última columna:
+La cadena de texto '0000' ha sobre escrito valores celda por celda. Pero no ha reemplazado todo, sino solo de la posición 3 a la 6 (3,4,5,6).
+
+Toda variable nueva se crear al final de la tabla de datos. Podemos reubicar la posición de esa última columna:
 ```{r, eval=FALSE}
 # jugando con la posiciones:
-provincias=provincias[,c(10,1:9)]  #la ultima es la posicio 10.
+provincias=provincias[,c(10,1:9)]  #la ultima es la posicion 10.
 ```
 
 Tenemos entonces:
@@ -325,13 +353,18 @@ Tenemos entonces:
 head(provincias,10)
 ```
 
-Hagamos el '_merge_', entre los datos de **regiones** y **provincias**:
+Queremos juntar ahora ambas tablas. Hagamos el '_merge_', entre los datos de **regiones** y **provincias**:
 
 ```{r, eval=FALSE}
-provinciasNew=merge(provincias,regiones,by.x = 'regionUbigeo',
+
+provinciasNew=merge(provincias,regiones,
+                    by.x ='regionUbigeo',
                     by.y='regionUbigeo',
                     all.x = TRUE) # Esto detecta si alguna provincia no encontró Region.
+# pudo ser: merge(provincias,regiones)
 ```
+
+La función _merge_ pudo escribirse de manera más sencilla. Lo importante es que los argumentos "by" indiquen que columnas tienen los mismos valores, tal que se pueda hacer la intersección.
 
 Si el merge salió bien, provincias tendrá una nueva columna (al final) con el nombre de la Región:
 ```{r, eval=FALSE}
@@ -339,8 +372,9 @@ names(provinciasNew)
 ```
 
 
-Movamos de posición esa columna nueva:
+Movamos la columna _regionNombre_ a la posición '3':
 ```{r, eval=FALSE}
+# luego de la posición '2', poner la posición '11', y que a la 11 le siga todo lo demás
 provinciasNew=provinciasNew[,c(1:2,11,3:10)]
 ```
 
@@ -349,3 +383,5 @@ Asi quedó:
 ```{r, eval=FALSE}
 head(provinciasNew)
 ```
+
+####[VOLVER AL SILABO](https://inteligenciaperu.github.io/Estadistica/)
