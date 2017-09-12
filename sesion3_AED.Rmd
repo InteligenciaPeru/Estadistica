@@ -252,6 +252,9 @@ boxplot(myData$POBLACION,
         range=detectorAtipicos, 
         notch = T)
 ```
+
+El siguiente comando entrega los valores numéricos que se usaron para construir el boxplot:
+
 ```{r, eval=FALSE}
 boxplot.stats(myData$POBLACION, coef = detectorAtipicos)
 ```
@@ -301,7 +304,7 @@ Pidamos un histograma:
 hist(myData$IDE)
 ```
 
-Las mediciones nos sugieren comportamiento normal:
+Las mediciones nos sugieren comportamiento normal, veamos:
 ```{r, eval=FALSE}
 ide <- myData$IDE
 hist(ide, freq = F)
@@ -316,12 +319,12 @@ boxplot(myData$IDE)
 Los gráficos anteriores no sólo sugieren poca dispersión, sino simetría. Veamos:
 ```{r, eval=FALSE}
 library(moments)
-skewness(myData$IDE)
+skewness(myData$IDE)  #0.3513978
 ```
 
-Y como seria la kurtosis (que no se detecta en el boxplot, pero se sugiere en el histograma):
+Y como seria la kurtosis (que no se detecta en el boxplot, pero sí se sugiere en el histograma):
 ```{r, eval=FALSE}
-kurtosis(myData$IDE)
+kurtosis(myData$IDE) #2.738378
 ```
 
 [Inicio](#beginning)

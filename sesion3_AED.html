@@ -294,6 +294,7 @@ boxplot(myData$POBLACION,
         horizontal = T, 
         range=detectorAtipicos, 
         notch = T)</code></pre>
+<p>El siguiente comando entrega los valores numéricos que se usaron para construir el boxplot:</p>
 <pre class="r"><code>boxplot.stats(myData$POBLACION, coef = detectorAtipicos)</code></pre>
 <p>De los resultados anteriores, podemos saber que provincias son las atipicas:</p>
 <pre class="r"><code>resultados=boxplot.stats(myData$POBLACION, coef = 1.5)
@@ -316,7 +317,7 @@ myData[myData$POBLACION&gt;tope,]$PROVINCIA</code></pre>
 <pre class="r"><code>sd(myData$IDE)</code></pre>
 <p>Pidamos un histograma:</p>
 <pre class="r"><code>hist(myData$IDE)</code></pre>
-<p>Las mediciones nos sugieren comportamiento normal:</p>
+<p>Las mediciones nos sugieren comportamiento normal, veamos:</p>
 <pre class="r"><code>ide &lt;- myData$IDE
 hist(ide, freq = F)
 curve(dnorm(x, mean=mean(ide), sd=sd(ide)), add=TRUE,col='red')</code></pre>
@@ -324,9 +325,9 @@ curve(dnorm(x, mean=mean(ide), sd=sd(ide)), add=TRUE,col='red')</code></pre>
 <pre class="r"><code>boxplot(myData$IDE)</code></pre>
 <p>Los gráficos anteriores no sólo sugieren poca dispersión, sino simetría. Veamos:</p>
 <pre class="r"><code>library(moments)
-skewness(myData$IDE)</code></pre>
-<p>Y como seria la kurtosis (que no se detecta en el boxplot, pero se sugiere en el histograma):</p>
-<pre class="r"><code>kurtosis(myData$IDE)</code></pre>
+skewness(myData$IDE)  #0.3513978</code></pre>
+<p>Y como seria la kurtosis (que no se detecta en el boxplot, pero sí se sugiere en el histograma):</p>
+<pre class="r"><code>kurtosis(myData$IDE) #2.738378</code></pre>
 <p><a href="#beginning">Inicio</a></p>
 <hr />
 <p><a id="catcat"></a></p>
