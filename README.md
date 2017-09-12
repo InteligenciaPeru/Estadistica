@@ -99,7 +99,8 @@ ____
   <tr>
  	<td>II</td>
  	<td>3</td>
- 	<td colspan="1">Análisis Exploratorio de Datos (AED)</td>
+ 	
+ 	<td colspan="1"><a href="https://rawgit.com/InteligenciaPeru/Estadistica/master/sesion2_AED.html" target="_blank">Análisis Exploratorio de Datos (AED)</a></td>
  	<td> </td>
  </tr>
   <tr>
