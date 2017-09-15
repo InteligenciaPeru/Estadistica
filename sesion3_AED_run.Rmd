@@ -42,7 +42,7 @@ ______
 ## <span style="color:blue"> Exploración de variables categoricas No Ordinales</span>
 
 Carguemos la data:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 folder='data'
 fileName='idePeru2012.csv'
 fileToRead=file.path(folder,fileName)
@@ -51,7 +51,7 @@ myData=read.csv(fileToRead,strip.white = T,stringsAsFactors = F)
 
 Veámos cuáles son las categóricas:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 str(myData)
 ```
 
@@ -59,7 +59,7 @@ Nótese que las categóricas no tienen que ser texto. En este caso, son las dos 
 
 Veamos COSTA:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 table(myData$COSTA)
 ```
 
@@ -68,7 +68,7 @@ Con esta tabla de frecuencias, vemos que hay 27 provincias que están en la cost
 Grafiquemos nuestra variable COSTA:
 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 #Data
 toPlot=table(myData$COSTA) # se plotea la tabla de frequencias
 
@@ -87,7 +87,7 @@ barplot(toPlot,col='magenta',
 
 El **promedio** que podemos calcular aqui es la moda, el valor que más se repite:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 # la moda se calcula a partir de la tabla de frecuencias
 frecuencias=table(myData$COSTA)
 names(frecuencias[which.max(frecuencias)])
@@ -95,7 +95,7 @@ names(frecuencias[which.max(frecuencias)])
 
 Las nominales tienes dispersión, que justamente interpreta si la moda es representativa o no. Usamos para ellos la formula de Herfindahl, si el resultado se acerca más a '1', la variable tiene moda predominante, si se acerca a '0', la moda no es relevante:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 #variable a analizar
 distribucion=table(myData$COSTA)
 
@@ -112,7 +112,7 @@ ____
 ## <span style="color:blue"> Exploración de variables categoricas Ordinales</span>
 
 No tenemos una variable ordinal, pero creemos una usando el propio IDE. Dividamos ese indicador en cinco grupos:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 gruposCantidad=5
 etiquetas=c('muy bajo','bajo','medio','alto','muy alto')
 myData$ideOrdinal=cut(myData$IDE,
@@ -123,16 +123,16 @@ myData$ideOrdinal=cut(myData$IDE,
 
 Acabamos de 'cortar' el IDE en cinco grupos. Veamos qué tenemos en la data:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 str(myData)
 ```
 
 Cómo se distribuye?
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 table(myData$ideOrdinal)
 ```
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 toPlot=table(myData$ideOrdinal)
 barplot(toPlot,col='magenta',
         xlab='Nivel',
@@ -141,25 +141,25 @@ barplot(toPlot,col='magenta',
 ```
 
 La moda la podemos calcula nuevamente:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 # la moda se calcula a partir de la tabla de frecuencias
 frecuencias=table(myData$ideOrdinal)
 names(frecuencias[which.max(frecuencias)])
 ```
 
 Podemos calcular otro **promedio**, la mediana:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 median(as.numeric(myData$ideOrdinal),na.rm = T)
 ```
 
 La mediana se interpreta aquí como:'la _mitad_ de las provincias llega hasta nivel IDE-medio'. Confirmemos:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 cumsum(prop.table(table(myData$ideOrdinal)))
 ```
 
 Desde las ordinales podemos pedir los boxplots:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 boxplot(myData$ideOrdinal, 
         horizontal = T, 
         main='Distribución de los niveles del IDE')
@@ -168,7 +168,7 @@ boxplot(myData$ideOrdinal,
 El ancho de la caja central sugiere una idea de dispersion, mientras más ancha la caja central, más dspersión hay; mientras más alejadas las 'patitas centrales' eleva la posibilidad de _outliers_.
 
 Hablando de dispersión, Finalmente, veamos la dispersion usando Herfindahl:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 #variable a analizar
 distribucion=table(myData$ideOrdinal)
 
@@ -180,13 +180,13 @@ H=sum(prop.table(distribucion)^2)
 
 Otra medida de interés, relacionada a lo que se ve en el boxplot, es el rango intercuartil (al ancho de la caja):
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 IQR(myData$ideOrdinal)
 ```
 
 Finalmente, puedes calcular la **desviación absoluta de la mediana**:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 mad(as.numeric(myData$ideOrdinal))
 ```
 
@@ -204,24 +204,24 @@ Estos dos ultimos estadísticos sirven esencialmente para comparar, sin descarta
 
 La variable _población_ puede servir para ello:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 myData$POBLACION
 ```
 
 Si se tienen pocos valores, podriamos graficar un gráfico de barras, pero como ese no es el caso, corresponde hacer un histograma:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 hist(myData$POBLACION, breaks = "Sturges") # cambiar breaks a 30?
 ```
 
 Veamos sus estadísticos:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 summary(myData$POBLACION)
 ```
 
 Un boxplot:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 detectorAtipicos=1.5
 boxplot(myData$POBLACION, 
         horizontal = T, 
@@ -231,24 +231,24 @@ boxplot(myData$POBLACION,
 
 El siguiente comando entrega los valores numéricos que se usaron para construir el boxplot:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 boxplot.stats(myData$POBLACION, coef = detectorAtipicos)
 ```
 
 De los resultados anteriores, podemos saber que provincias son las atipicas:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 resultados=boxplot.stats(myData$POBLACION, coef = 1.5)
 resultados$stats[5]
 ```
 Ese es el máximo valor admitido (con coef=1.5). Pidamos que provincias tienen una población mayor:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 tope=resultados$stats[5]
 myData[myData$POBLACION>tope,]$PROVINCIA
 ```
 
 De lo anterior podemos saber cuantos atípicos son provincias con ciudad capital:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 table(myData[myData$POBLACION>tope,]$CAPITAL)
 ```
 
@@ -266,22 +266,22 @@ ______
 ## <span style="color:blue"> Explorando mediciones</span>
 
 Las mediciones dan valores continuos (aceptan decimales). Utilicemos el propio IDE:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 summary(myData$IDE)
 ```
 
 Los estadísticos no muestran la desviación típica, aquí está:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 sd(myData$IDE)
 ```
 
 Pidamos un histograma:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 hist(myData$IDE)
 ```
 
 Las mediciones nos sugieren comportamiento normal, veamos:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 ide <- myData$IDE
 hist(ide, freq = F)
 curve(dnorm(x, mean=mean(ide), sd=sd(ide)), add=TRUE,col='red')
@@ -289,17 +289,17 @@ curve(dnorm(x, mean=mean(ide), sd=sd(ide)), add=TRUE,col='red')
 
 
 ...Y nuestro boxplot:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 boxplot(myData$IDE)
 ```
 Los gráficos anteriores no sólo sugieren poca dispersión, sino simetría. Veamos:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 library(moments)
 skewness(myData$IDE)  #0.3513978
 ```
 
 Y como seria la kurtosis (que no se detecta en el boxplot, pero sí se sugiere en el histograma):
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 kurtosis(myData$IDE) #2.738378
 ```
 
@@ -315,28 +315,28 @@ _____
 
 
 Veamos como se distribuye _CAPITAL_:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 table(myData$CAPITAL)
 ```
 
 ... y _COSTA_:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 table(myData$COSTA)
 ```
 
 La manera simple de analizar relaciones *cat-cat*  (asociación) es la **tabla de contingencia** (crosstab):
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 table(myData$COSTA,myData$CAPITAL)
 ```
 
 Alternativamente;
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 prop.table(table(myData$COSTA,myData$CAPITAL),margin = 2) #columna
 ```
 
 La relación detectada se refleja en el gráfico:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 legendPlot=levels(as.factor(myData$CAPITAL))
 bartable = table(myData$CAPITAL,myData$COSTA)  ## get the cross tab
 barplot(bartable, beside = TRUE,
@@ -355,18 +355,18 @@ ____
 Lo usual es ver como se comporta una variable numérica ante diversos factores. Veamos estadísticos:
 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 aggregate(IDE ~ CAPITAL, data=myData,FUN=mean)
 ```
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 aggregate(cbind(SALUD, EDUCACION,ELECTRIFICACION) ~ CAPITAL,
           data=myData,
           FUN=mean)
 ```
 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 aggregate(cbind(SALUD, EDUCACION,ELECTRIFICACION) ~ CAPITAL + COSTA,
           data=myData,
           FUN=mean)
@@ -374,21 +374,21 @@ aggregate(cbind(SALUD, EDUCACION,ELECTRIFICACION) ~ CAPITAL + COSTA,
 
 Podemos graficar:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 boxplot(cbind(SALUD, EDUCACION,ELECTRIFICACION) ~ CAPITAL + COSTA,
           data=myData)
 
 ```
 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 par(mfrow=c(2,1))
 hist(myData$SALUD) 
 hist(myData$EDUCACION)
 
 ```
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 par(mfrow=c(2,1))
 hist(myData$SALUD,xlim = c(0,100),ylim=c(0,100)) 
 hist(myData$EDUCACION,xlim = c(0,100),ylim=c(0,100))
@@ -407,18 +407,18 @@ ____
 
 Un básico análisis corresponde al concepto de correlación:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 res <- cor(myData[,c(6:10)],use='complete.obs')
 round(res, 2)
 ```
 De hecho, tenemos una versión no-paramétrica para Pearson:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 res2=cor(myData[,c(6:10)],use='complete.obs',method='spearman')
 round(res2, 2)
 ```
 
 Veamos una gráfica:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 plot(myData[,c(6:10)], main="Matriz de Scatterplots")
 ```
 

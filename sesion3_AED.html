@@ -200,23 +200,6 @@ barplot(toPlot,col='magenta',
         ylab=tituloY,
         main= tituloPlot,
         las=2)</code></pre>
-<p>Podemos cambiar la categorías, tal que las tablas y gráficos informen mejor:</p>
-<pre class="r"><code>theLevels=c(0,1)
-theLabels=c('No Costa', 'En Costa') #notar secuencia de ambos!
-
-myData$COSTA=factor(myData$COSTA,
-                    levels=theLevels,
-                    labels=theLabels,
-                    ordered=F) # no debe ser ordinal
-
-table(myData$COSTA)</code></pre>
-<p>Reploteemos:</p>
-<pre class="r"><code># a plotear:
-barplot(toPlot,col='magenta',
-        xlab=tituloX,
-        ylab=tituloY,
-        main= tituloPlot,
-        las=2)</code></pre>
 <p>El <strong>promedio</strong> que podemos calcular aqui es la moda, el valor que más se repite:</p>
 <pre class="r"><code># la moda se calcula a partir de la tabla de frecuencias
 frecuencias=table(myData$COSTA)
