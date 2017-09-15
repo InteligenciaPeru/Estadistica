@@ -222,7 +222,7 @@ tablaT</code></pre>
 ##  (based on 2000 replicates)
 ## 
 ## data:  tablaT
-## X-squared = 3.1856, df = NA, p-value = 0.5347</code></pre>
+## X-squared = 3.1856, df = NA, p-value = 0.5337</code></pre>
 <p>Podemos ver graficamente por que decidimos lo anterior.</p>
 <pre class="r"><code>par(mfrow=c(2,1))
 barplot(c(.35,.35,.21,.07,.02), col=&quot;red&quot;, main='supuesto')
@@ -256,7 +256,7 @@ prop.table(tablaTE)</code></pre>
 ##  replicates)
 ## 
 ## data:  tablaTE
-## X-squared = 18.042, df = NA, p-value = 0.02649</code></pre>
+## X-squared = 18.042, df = NA, p-value = 0.03198</code></pre>
 <p>Si el valor del <strong>p-value</strong> es menor a <strong>0.05</strong>, se asume que hay asociación (formalmente estamos rechanzando la hipotesis nula: “la variables son independientes”).</p>
 <p>Hasta aqui sabemos que las variables están relacionadas, pero no tenemos mayor detalle de cómo es esa relación. Es aquí donde aparece el <strong>análisis de correspondencias</strong>. Éste es un análisis gráfico que permite conocer como se están asociando las categorías.</p>
 <p>Se comienza por calcular la tabla de correspondencias, a partir de la tabla de contingencia:</p>
