@@ -106,10 +106,8 @@ ____
  	<td>III</td>
  	<td>4</td>
  	<td colspan="1"><a href="https://rawgit.com/InteligenciaPeru/Estadistica/master/sesion4_CDA.html" target="_blank">Análisis de Datos Categóricos</a></td>
- 	
  	<td></td>
  </tr>
- 
   <tr>
  	<td>IV</td>
  	<td>5</td>
