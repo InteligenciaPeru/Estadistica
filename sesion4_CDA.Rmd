@@ -10,7 +10,7 @@ ____
 <a id='beginning'></a>
 
 Carguemos la data:
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 folder='data'
 fileName='idePeru2012.csv'
 fileToRead=file.path(folder,fileName)
@@ -19,25 +19,25 @@ ide12=read.csv(fileToRead,strip.white = T,stringsAsFactors = F)
 
 Veámos cuáles son las categóricas:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 str(ide12)
 ```
 
 La variable TAMANO debe ser ordinal:
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 ide12$TAMANO=as.ordered(ide12$TAMANO)
 ```
 
 Cambiemos los compnentes del IDE a ordinal (5 niveles). Para ello, primero creemos cinco nuevas variables (estarán vacías):
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 ide12$elcOrd=ide12$sanOrd=ide12$eduOrd=ide12$salOrd=ide12$idOrd=NA
 ```
 
 
 Ahora démosle valores a las variables recién creadas. Se crearán tres niveles en cada una, pero les daremos diferentes nombres para que se note el propósito de la técnica:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 gruposCantidad=3
 etiquetas1=c('bajo','medio','alto')
 ide12[,c(15:17)]=lapply(ide12[,c(6:8)],cut,
@@ -56,7 +56,7 @@ ide12[,c(18:19)]=lapply(ide12[,c(9:10)],cut,
 ```
 
 Una mirada:
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 summary(ide12[,c(15:19)])
 ```
 
@@ -67,19 +67,19 @@ summary(ide12[,c(15:19)])
 
 La tabla de frecuencias de una variable categórica es el punto de partida. Hallemos la tabla de frecuencias para la variable TAMANO, que asigna a la provincias a una categoria segun su población, siendo 1 el grupo de población menor, y el cinco el de mayor poblacion:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 tablaT=table(ide12$TAMANO)
 tablaT
 ```
 
 Siendo los porcentajes:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 prop.table(tablaT)
 ```
 
 Lo interesante es cuando queremos hacer inferencias. En este caso puede resultar obvio, pero veamos como R responde: "¿Es probable que los grupos sean del mismo tamaño?"
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 chisq.test(tablaT)
 ```
 
@@ -87,7 +87,7 @@ La prueba chi-cuadrado acaba de testear si esos valores de la tabla de frecuenci
 
 Pero podriamos tener una hipotesis más exigente:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 chisq.test(tablaT, p=c(.35,.35,.21,.07,.02))
 ```
 
@@ -95,12 +95,12 @@ Hay más de 50% de  probabilidad que la tabla de frecuencias se distribuya con e
 
 Para verificar lo hayado, podemos calcularlo con apoyo computacional:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 chisq.test(tablaT, p=c(.35,.35,.21,.07,.02),simulate.p.value = T)
 ```
 
 Podemos ver graficamente por que decidimos lo anterior.
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 par(mfrow=c(2,1))
 barplot(c(.35,.35,.21,.07,.02), col="red", main='supuesto')
 barplot(prop.table(tablaT),col="yellow", main='real')
@@ -110,20 +110,20 @@ barplot(prop.table(tablaT),col="yellow", main='real')
 ## ANALIZANDO DOS VARIABLE
 
 Aqui necesitamos la tabla de contingencias:
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 tablaTE=table(ide12$TAMANO,ide12$eduOrd)
 prop.table(tablaTE)
 ```
 
 
 Luego, con la prueba Chi-Cuadrado se pregunta si el comportamiento conjunto expresa asoción:
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 chisq.test(tablaTE)
 ```
 
 Se ha obtenido un resultado no confiable, pues algun requisito de la prueba no se puede sostener (hay celdas menores que 5, y hasta un cero). Lo bueno es que R alerta que podria ser incorrecto, y nos da una salida no paramétrica:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 chisq.test(tablaTE,simulate.p.value = T)
 ```
 
@@ -134,20 +134,20 @@ Hasta aqui sabemos que las variables están relacionadas, pero no tenemos mayor 
 
 Se comienza por calcular la tabla de correspondencias, a partir de la tabla de contingencia:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 library(ca)
 tablaCA_te=ca(tablaTE)
 ```
 
 
 Este objeto tiene información interesante:
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 tablaCA_te
 ```
 
 Si revisamos los **eigenvalues** vemos que la tabla se ha descompuesto en dos dimensiones, y que la primera recoge la mayor información:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 plot.ca(tablaCA_te, col=c("red","blue"))
 ```
 
@@ -164,7 +164,7 @@ Queremos entender la relación entre las categorias de ambas variables. Para ell
    
 Para ver los angulos podemos pedir:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 plot.ca(tablaCA_te, col=c("red","blue"), arrows = c(T,T))
 ```
 
