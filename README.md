@@ -83,7 +83,6 @@ ____
     <td colspan="1"><b><center>SESION</center></b></td>
     <td><b>TEMA</b></td>
     <td><b>EVALUACION</b></td> </tr>
- 
   <tr>
  	<td>I</td>
  	<td><a href="https://docs.google.com/presentation/d/1DizRUN2SA8_hqtz82JGFyEj06TZc4mDTKXWoQauY3ao/edit?usp=sharing" target="_blank">1</a></td>	
@@ -91,38 +90,31 @@ ____
  	<td>Presentación Inicial de Casos</td>
  </tr>
   <tr>
- 	<td>I</td>
+ 	<td>II</td>
  	<td>2</td><td colspan="1"><a href="https://rawgit.com/InteligenciaPeru/Estadistica/master/sesion2IntroR.html" target="_blank">Introducción al Análisis Estadístico en R</a></td>
 <td> </td>
  </tr>
- 
   <tr>
- 	<td>II</td>
+ 	<td>III</td>
  	<td>3</td>
  	<td colspan="1"><a href="https://rawgit.com/InteligenciaPeru/Estadistica/master/sesion3_AED.html" target="_blank">Análisis Exploratorio de Datos (AED)</a></td>
  	<td> </td>
  </tr>
   <tr>
- 	<td>III</td>
+ 	<td>IV</td>
  	<td>4</td>
  	<td colspan="1"><a href="https://rawgit.com/InteligenciaPeru/Estadistica/master/sesion4_CDA.html" target="_blank">Análisis de Datos Categóricos</a></td>
  	<td></td>
  </tr>
   <tr>
- 	<td>IV</td>
+ 	<td>V</td>
  	<td>5</td>
- 	<td colspan="1">Técnicas Multivariantes</td>
+ 	<td colspan="1"><a href="https://rawgit.com/InteligenciaPeru/Estadistica/master/sesion_multindex.html" target="_blank">Técnicas Multivariantes y Visualización de Indicadores </a></td>
  	<td></td>
  </tr>
   <tr>
- 	<td>V</td>
- 	<td>6</td>
- 	<td colspan="1">Construcción de Indicadores</td>
- 	<td> </td>
- </tr>
-  <tr>
  	<td>I</td>
- 	<td>7</td>
+ 	<td>6</td>
  	<td colspan="1">Medición Social e Inteligencia</td>
  	<td>Presentación Final de Casos</td>
  </tr>

@@ -1,0 +1,302 @@
+![](logo.png)
+
+# Escuela Nacional de Inteligencia
+## Curso de Estadística para el Análisis Social
+### Prof. José Manuel Magallanes, PhD 
+____
+## **Técnicas Multivariantes y Visualización de Indicadores**
+____
+
+<a id='beginning'></a>
+
+Carguemos la data:
+```{r, eval=FALSE}
+folder='data'
+fileName='idh_elec.csv'
+fileToRead=file.path(folder,fileName)
+idh_elec=read.csv(fileToRead,strip.white = T,
+                  stringsAsFactors = F)
+```
+
+Como antes revisemos que TIPO de data tenemos:
+
+```{r, eval=FALSE}
+str(idh_elec)
+```
+
+La data tiene los componentes del IDH calculados por distrito el año 2012. Así mismo, tenemos los votos para PPK y KEIKO durante la segunda vuelta del 2016. Veamos qué podemos preguntarnos con técnicas multivariadas.
+
+
+## Mapa de similitudes
+
+Una primera pregunta sería ¿Serán los distritos dónde ganaron PPK o KEIKO muy diferentes?
+Responder esta pregunta implica que creemos un mapa de distritos, pero NO uno geográfico, sino un mapa donde los distritos más similares en IDH estén más cerca.
+
+Crear mapas basados en multiples valores es el objetivo del **escalamiento multidimensional**. Las múltiples variables serán los componentes del idh:
+```{r, eval=FALSE}
+# Aquí están los componentes
+dataMap=idh_elec[,c(9:12)]
+
+# Viendo resultado:
+head(dataMap)
+```
+
+El subconjunto de de arriba está bien, pero necesitamos que haya alguna manera de identificar los distritos. De ahi que mejor reemplazamos los numeros de fila por el ubigeo:
+
+```{r, eval=FALSE}
+row.names(dataMap)=idh_elec$ubiDis
+head(dataMap)
+```
+No podíamos incluir el ubigeo dentro de la data, pues malograba la técnica, por ello la posimos como nombre de la fila.
+
+
+Ahora sí sigamos:
+
+```{r, eval=FALSE}
+# paso clave: creacion de distancias...
+d <- dist(dataMap) 
+```
+
+En **d** están las distancias entre distritos; la técnica de escalamiento óptimo creará  el mapa con esas distancias:
+
+```{r, eval=FALSE}
+resultado <- cmdscale(d,eig=TRUE, k=2) # k sugiere dimensiones
+resultado$GOF # mientras mas cerca a 1 mejor.
+```
+
+Ya hemos obtenido las **coordenadas** para crear un mapa donde los distritos más cercanos en IDH se juntan entre sí. Veámoslo:
+
+```{r, eval=FALSE}
+labelsMap=idh_elec$dist
+dimension1 <- resultado$points[,1] # coordenada 
+dimension2 <- resultado$points[,2] # coordenada 
+cols=c('red','blue')
+plot(dimension1, dimension2, xlab="Dimensión 1", ylab="Dimensión 2", 
+  main="Qué distritos son más similares en cuanto a IDH?",	type="n")
+text(dimension1, dimension2, 
+     labels = labelsMap, 
+     cex=.3) 
+```
+Hay una gran cantidad de distritos hacia la derecha, pero nótese que hay varios distritos de Lima hacia la izquierda que se alejan de los demas.
+
+Creemos la variable que nos indique donde ganó PPK, para ver si PPK tiene alguna presencia más notoria en alguno de estos distritos:
+
+
+```{r, eval=FALSE}
+idh_elec$ganappk=as.factor(ifelse(idh_elec$PPK>idh_elec$FP,1,0))
+levels(idh_elec$ganappk)=c('Keiko','PPK')
+labelsMap=idh_elec$ganappk
+dimension1 <- resultado$points[,1]
+dimension2 <- resultado$points[,2]
+cols=c('red','blue')
+plot(dimension1, dimension2, xlab="Dimensión 1", ylab="Dimensión 2", 
+  main="Que tan similares en IDH eran las provincias donde gana PPK?",	type="n")
+text(dimension1, dimension2, 
+     labels = labelsMap, 
+     cex=.7,col=cols[labelsMap]) 
+```
+
+Vemos que PPK es quien se posiciona mejor en ese grupo de distritos limeños.
+
+
+## Agrupando unidades de estudio
+
+En el ejercicio anterior no encontramos grupos, sino coordenadas para hacer un mapa. Pero tenemos además maneras crear grupos, lo que hacemos mediante la identificación de conglomerados o clusters. 
+
+La técnica puede partir desde la matriz de distancias **d** antes calculada. Para de ahí aplicar:
+
+```{r, eval=FALSE}
+resultado=hclust(d)
+```
+
+Ya tenemos los clusters. Para visualizar lo que salió usamos el dendograma, el cual nos da una idea de la cantidad de clusters en que podriamos dividir a nuestros distritos:
+
+```{r, eval=FALSE}
+plot(resultado,cex=0.1)
+```
+
+
+
+La técnica asignará un distrito a un cluster particular, pero nosotros debemos indicar cuántos queremos. Por ejemplo, si quisieramos tres, el dendograma anterior se mostraría así:
+
+```{r, eval=FALSE}
+plot(resultado, cex = 0.6,labels=FALSE)
+rect.hclust(resultado, k = 3, border = c('red','blue','green'))
+```
+
+Si estamos de acuerdo creemos esa columna adicional en la data original:
+
+```{r, eval=FALSE}
+clusterColumn <- as.data.frame(cutree(resultado, k = 3))
+head(clusterColumn)
+```
+
+Lo *MALO* es que los clusters creado no están en la data original.
+
+Lo que falta es **juntar* esta data con la original (idh_elec) como una columna adicional. Para juntar o *merge* dos tablas de datos, necesitamos que tengan una columna común. Recordemos que los numeros de fila de arriba son los ubigeos del distrito; esa sería la columna común:
+
+```{r, eval=FALSE}
+# aqui la creamos:
+clusterColumn$ubiDis=as.integer(row.names(clusterColumn))
+head(clusterColumn)
+```
+
+El nombre con la información del cluster es muy largo, y ya podemos borrar el ubigeo como nombre de fila:
+```{r, eval=FALSE}
+names(clusterColumn)[1]='cluster'
+row.names(clusterColumn)=NULL # borrar el ubigeo como nombre de fila
+head(clusterColumn)
+```
+
+Hagamos ahora el merge:
+
+```{r, eval=FALSE}
+idh_elec=merge(idh_elec,clusterColumn)
+
+```
+
+
+Los clusters creados tiene un numero, pero ese numero no representa necesariamente un orden, verifiquemos:
+```{r, eval=FALSE}
+names(idh_elec)
+aggregate(cbind(esperanza,secundaria,tiempoedu,percapitaf) ~ cluster, data=idh_elec,FUN=median)
+```
+
+Vemos que afortunadamente los numeros sí indican algun orden entre los grupos.
+
+Aprovechemos que cada cluster representa un distrito para graficarlo en un mapa
+
+Traigamos el mapa por distritos:
+
+```{r, eval=FALSE}
+library(rgdal)
+
+subfolder='mapa'
+fileName='DISTRITO_16_03_2015.shp' 
+fileToRead=file.path(folder,subfolder,fileName)
+PeruMap <- readOGR(fileToRead,stringsAsFactors=F)
+```
+
+La data de IDH hay que juntarla con la data del mapa. Veamos que data tiene el mapa distrital:
+```{r, eval=FALSE}
+str(PeruMap@data)
+```
+
+La variable IDDIST es la misma que ubiDis, pero necesita ser transformada al mismo tipo (ubiDis es entero):
+
+```{r, eval=FALSE}
+PeruMap@data$IDDIST=as.integer(PeruMap@data$IDDIST)
+```
+
+Así traemos la data de IDH hacia el mapa:
+```{r, eval=FALSE}
+PeruMap=merge(PeruMap,idh_elec,by.x="IDDIST",by.y="ubiDis", all.x=T)
+```
+
+Asi lo gráficamos:
+```{r, eval=FALSE}
+colors=c('red', 'yellow','darkgreen') # colores ascendentes?
+plot(PeruMap,border=F, col=colors[PeruMap@data$cluster])
+```
+
+Podemos subsetear al mapa; y saldrá un mapa enfocado en esa zona:
+```{r, eval=FALSE}
+LIMA=PeruMap[PeruMap@data$NOMBDEP=="LIMA",]
+plot(LIMA,
+     border=F, col=colors[LIMA@data$cluster])
+```
+
+
+## Buscando explicaciones
+
+Si quisieramos saber cómo están relacionados los resultados electorales con el idh, necesitamos hacer una regresión.
+Primero, creemos un subconjunto:
+
+```{r, eval=FALSE}
+test=PeruMap@data[,c('ganappk','esperanza','secundaria','tiempoedu','percapitaf')]
+aggregate(cbind(esperanza,secundaria,tiempoedu,percapitaf) ~ ganappk, data=test,FUN=mean)
+```
+
+
+Exploremos ese subconjunto:
+
+```{r, eval=FALSE}
+par(mfrow=c(2,2))
+boxplot(esperanza ~ ganappk, data=test,main='esperanza de vida')
+boxplot(secundaria ~ ganappk, data=test,main='secundaria')
+boxplot(tiempoedu ~ ganappk, data=test,main='años de educación')
+boxplot(percapitaf ~ ganappk, data=test,main='percapita familiar')
+
+```
+
+
+
+Aqui calculamos es relación multivariada:
+
+
+```{r, eval=FALSE}
+
+testLogit <- glm(ganappk ~ ., 
+                 data = test, 
+                 family = "binomial")
+
+summary(testLogit)
+```
+
+
+Los valores negativos indican que el aumento de esa variable disminuye la probabilidad de ganar para PPK, los positivos lo contrario. Otra manera de leerlo: 
+
+
+```{r, eval=FALSE}
+exp(coef(testLogit))
+```
+Mientres mayor a 1, mayor la probabilidad de ganar, si es menor que 1, lo opuesto.
+
+Lo anterior 'modelaba' la respuesta dicotómica _quien gana_, pero si tuvieramos una variable de conteo?
+```{r, eval=FALSE}
+hist(PeruMap@data$PPK)
+```
+
+Lo razonable sería:
+
+```{r, eval=FALSE}
+test2=PeruMap@data[,c('PPK','esperanza','secundaria','tiempoedu','percapitaf')]
+##
+library(MASS)
+testCount=glm.nb(PPK ~ ., data= test2)
+summary(testCount)
+```
+
+Pero si dividiésemos el conteo de votos entre la población:
+
+```{r, eval=FALSE}
+PeruMap@data$densidadPob=PeruMap@data$PPK/PeruMap@data$pobla
+hist(PeruMap@data$densidadPob)
+```
+
+Un modelo podría ser:
+
+```{r, eval=FALSE}
+test3=PeruMap@data[,c('densidadPob','esperanza','secundaria','tiempoedu','percapitaf')]
+testMedida <- glm(densidadPob ~ ., 
+                 data = test3, 
+                 family = gaussian)
+
+summary(testMedida)
+```
+
+Sin embargo, dada la distribución de la densidad, el comportamiento de los residuos no se ajustará bien:
+```{r, eval=FALSE}
+qqnorm(residuals(testMedida))
+abline(a=0,b=1)
+```
+
+
+[Inicio](#beginning)
+
+______
+
+
+<br></br>
+
+####[VOLVER AL SILABO](https://inteligenciaperu.github.io/Estadistica/)
