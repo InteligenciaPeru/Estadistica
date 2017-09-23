@@ -47,7 +47,7 @@ El subconjunto de de arriba está bien, pero necesitamos que haya alguna manera 
 row.names(dataMap)=idh_elec$ubiDis
 head(dataMap)
 ```
-No podíamos incluir el ubigeo dentro de la data, pues malograba la técnica, por ello la posimos como nombre de la fila.
+No podíamos incluir el ubigeo dentro de la data, pues malograba la técnica, por ello la pusimos como nombre de la fila.
 
 
 Ahora sí sigamos:
